@@ -7,31 +7,55 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 
-public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildViewHolder> {
+public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildViewHolder>  {
 
     Context context;
-//    ArrayList<Cloth> clothArrayList;
-String clothName;
-    public ChildAdapter(Context context,String clothName) {
-        this.clothName=clothName;
+    ChildListener childListener;
+    ArrayList<String> clothNames=new ArrayList<>();
+    ArrayList<Boolean> booleans=new ArrayList<>();
+
+    public ChildAdapter(Context context, ArrayList<String> clothNames, ArrayList<Boolean> booleans) {
         this.context = context;
-//        this.clothArrayList = clothArrayList;
+        this.clothNames = clothNames;
+        this.booleans = booleans;
     }
 
     @NonNull
     @Override
     public ChildViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view= LayoutInflater.from(context).inflate(R.layout.list_single_item,viewGroup,false);
+        View view = LayoutInflater.from(context).inflate(R.layout.list_single_item, viewGroup, false);
         return new ChildViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ChildViewHolder childViewHolder, final int i) {
-        childViewHolder.clothName.setText(clothName+ " "+i);
+    public void onBindViewHolder(@NonNull final ChildViewHolder childViewHolder, final int i) {
+        childViewHolder.clothName.setText(clothNames.get(i) + " " +(int)( i + 1));
 
+        childViewHolder.checkBox.setChecked(booleans.get(i));
+
+        childViewHolder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked)
+                    childListener.costUpdate(100);
+                else
+                    childListener.costUpdate(-100);
+            }
+        });
+
+    }
+
+
+    interface ChildListener {
+        void costUpdate(int cost);
+    }
+    void addListener(ChildListener childListener){
+        this.childListener=childListener;
     }
 
     @Override
@@ -40,14 +64,15 @@ String clothName;
     }
 
     public class ChildViewHolder extends RecyclerView.ViewHolder {
-        TextView clothName, clothDesc, noOfCloth;
+        TextView clothName, clothDesc, itemCost;
         CheckBox checkBox;
 
         public ChildViewHolder(@NonNull View itemView) {
             super(itemView);
             clothDesc = itemView.findViewById(R.id.el_cloth_description);
             clothName = itemView.findViewById(R.id.el_clothName);
-            checkBox = itemView.findViewById(R.id.checkbox);
+            checkBox = itemView.findViewById(R.id.child_checkbox);
+            itemCost=itemView.findViewById(R.id.child_item_cost);
         }
     }
 }

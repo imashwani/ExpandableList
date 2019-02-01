@@ -2,6 +2,7 @@ package com.example.expandablelist;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
+
+import org.xmlpull.v1.XmlPullParser;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -43,19 +46,19 @@ public class SignatureActivity extends AppCompatActivity {
         sad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setFace(sad);
+                setFace(0, sad);
             }
         });
         neutral.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setFace(neutral);
+                setFace(1, neutral);
             }
         });
         happy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setFace(happy);
+                setFace(2, happy);
             }
         });
 
@@ -102,13 +105,25 @@ public class SignatureActivity extends AppCompatActivity {
     }
 
     void clearFace() {
-        sad.setBackgroundColor(Color.parseColor("#ffffff"));
-        neutral.setBackgroundColor(Color.parseColor("#ffffff"));
-        happy.setBackgroundColor(Color.parseColor("#ffffff"));
+        sad.setImageDrawable(getResources().getDrawable(R.drawable.ic_exprience_icon_sad));
+        neutral.setImageDrawable(getResources().getDrawable(R.drawable.ic_exprience_icon_neutral));
+        happy.setImageDrawable(getResources().getDrawable(R.drawable.ic_exprience_icon_happy));
     }
 
-    void setFace(ImageButton imageButton) {
+    void setFace(int x, ImageButton imageButton) {
         clearFace();
-        imageButton.setBackgroundColor(Color.parseColor("#008577"));
+        switch (x) {
+            case 0:
+                imageButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_exprience_icon_sad_checked));
+                break;
+            case 1:
+                imageButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_exprience_icon_neutral_checked));
+                break;
+            case 2:
+                imageButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_exprience_icon_happy_checked));
+                break;
+
+        }
+
     }
 }
