@@ -2,6 +2,7 @@ package com.example.expandablelist;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,23 +10,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.ExpandableListView;
 import android.widget.TextView;
 
+import com.example.expandablelist.model.Cloth;
+import com.example.expandablelist.model.Order;
+import com.example.expandablelist.model.SubClothItem;
+
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder> {
 
-    ArrayList<Cloth> clothArrayList;
+    Order order;
     Context context;
     ActionListener actionListener;
 
-
-    public ParentAdapter(ArrayList<Cloth> clothArrayList, Context context) {
-        this.clothArrayList = clothArrayList;
+    public ParentAdapter(Order order, Context context) {
+        this.order = order;
         this.context = context;
     }
 
@@ -43,7 +43,7 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int i) {
 
-        Cloth cloth = clothArrayList.get(i);
+        Cloth cloth = order.getClothArrayList().get(i);
         ArrayList<String> clothNames = new ArrayList<>();
         final ArrayList<Boolean> booleans = new ArrayList<>();
         for (int j = 0; j < 5; j++) {
@@ -58,7 +58,7 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
 
         viewHolder.childRecyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-        final ChildAdapter childAdapter = new ChildAdapter(context, clothNames, booleans);
+        final ChildAdapter childAdapter = new ChildAdapter(context, order.getClothArrayList().get(i).getSubClothItemArrayList());
         //adding listener b/w activity and child rv
         childAdapter.addListener((ChildAdapter.ChildListener) context);
 
@@ -73,20 +73,45 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
             }
         });
 
-        viewHolder.parentCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        viewHolder.parentCheckbox.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                for (int i = 0; i < booleans.size(); i++) booleans.set(i, isChecked);
-                System.out.println("notifying items changed bro");
+            public void onClick(View v) {
+                int check = 0;
+                boolean isChecked = viewHolder.parentCheckbox.isChecked();
 
+                for (int i = 0; i < booleans.size(); i++) {
+                    View view = viewHolder.childRecyclerView.getChildAt(i);
+                    if (view instanceof ConstraintLayout) {
+                        CheckBox checkBox = (CheckBox) ((ConstraintLayout) view).getViewById(R.id.child_checkbox);
+                        if (checkBox.isChecked()) {
+                            check++;
+                        }
+                    }
+                }
+
+                ArrayList<SubClothItem> subClothItems = order.getClothArrayList().get(i).getSubClothItemArrayList();
+                for (int t = 0; t < subClothItems.size(); t++)
+                    subClothItems.get(t).setChecked(isChecked);
+
+                order.getClothArrayList().get(i).setSubClothItemArrayList(subClothItems);
                 childAdapter.notifyDataSetChanged();
+
+                int change = subClothItems.size() - check;
+                if (isChecked) {
+                    actionListener.checkListener(change);
+                }
+                else{
+                    actionListener.checkListener(check*-1);
+                }
+                System.out.println("notifying items changed bro " + isChecked);
             }
         });
+
     }
 
     @Override
     public int getItemCount() {
-        return clothArrayList.size();
+        return order.getClothArrayList().size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

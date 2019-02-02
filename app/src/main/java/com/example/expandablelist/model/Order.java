@@ -1,4 +1,4 @@
-package com.example.expandablelist;
+package com.example.expandablelist.model;
 
 import java.util.ArrayList;
 

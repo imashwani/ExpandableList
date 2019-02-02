@@ -10,16 +10,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.expandablelist.model.Cloth;
+import com.example.expandablelist.model.Order;
+import com.example.expandablelist.model.SubClothItem;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements ChildAdapter.ChildListener {
+public class MainActivity extends AppCompatActivity
+        implements ChildAdapter.ChildListener, ParentAdapter.ActionListener {
 
     ArrayList<Order> orders = null;
     RecyclerView washAndironELV, washAndFoldELV, dryCleanELV, rv4;
     Button signButton;
     TextView costTv, qtyTv;
     static int finalDeliveryCost = 0;
+    ParentAdapter parentAdapter;
     static int totalItems = 0;
 
     @Override
@@ -46,8 +52,8 @@ public class MainActivity extends AppCompatActivity implements ChildAdapter.Chil
         washAndFoldELV = findViewById(R.id.alteration_rv);
 
 
-        ParentAdapter parentAdapter = new ParentAdapter(orders.get(0).getClothArrayList(), this);
-//        parentAdapter.setActionListener(this);
+        parentAdapter = new ParentAdapter(orders.get(0), this);
+        parentAdapter.setActionListener(this);
 
         washAndFoldELV.setLayoutManager(new LinearLayoutManager(this));
         washAndFoldELV.setAdapter(parentAdapter);
@@ -64,11 +70,14 @@ public class MainActivity extends AppCompatActivity implements ChildAdapter.Chil
     private void initOrder() {
         orders = new ArrayList<>();
         List<Cloth> clothList = new ArrayList<>();
-        clothList.add(new Cloth("Shirt", "this is desc", 5));
-        clothList.add(new Cloth("Trouser", "this is desc", 3));
-        clothList.add(new Cloth("Drap", "this is desc", 3));
-        clothList.add(new Cloth("Muffler", "this is desc", 2));
-        clothList.add(new Cloth("Shirt", "this is desc", 5));
+        SubClothItem subClothItem = new SubClothItem("Shirt", false);
+        ArrayList<SubClothItem> subClothItemArrayList = new ArrayList<>();
+        for (int i = 0; i < 5; i++) subClothItemArrayList.add(subClothItem);
+        clothList.add(new Cloth("Shirt", "this is desc", 5, subClothItemArrayList));
+        clothList.add(new Cloth("Trouser", "this is desc", 3, subClothItemArrayList));
+        clothList.add(new Cloth("Drap", "this is desc", 3, subClothItemArrayList));
+        clothList.add(new Cloth("Muffler", "this is desc", 2, subClothItemArrayList));
+        clothList.add(new Cloth("Shirt", "this is desc", 5, subClothItemArrayList));
         orders.add(new Order((ArrayList<Cloth>) clothList, "Press and Press", clothList.size(), (float) 122.4));
 
         orders.add(new Order((ArrayList<Cloth>) clothList, "Wash and Fold", clothList.size(), (float) 100.48));
@@ -93,14 +102,29 @@ public class MainActivity extends AppCompatActivity implements ChildAdapter.Chil
     @Override
     public synchronized void costUpdate(int cost) {
 
-        finalDeliveryCost=(getFinalDeliveryCost()+cost);
+        finalDeliveryCost = (getFinalDeliveryCost() + cost);
 
 //        finalDeliveryCost += cost;
         System.out.println(
                 "cost hai= " + String.valueOf(cost) + " totla=" + finalDeliveryCost
         );
 
-        totalItems=(getTotalItems()+cost/100);
+        totalItems = (getTotalItems() + cost / 100);
+
+        costTv.setText("Rs. " + String.valueOf(finalDeliveryCost));
+        qtyTv.setText("Qty: " + String.valueOf(totalItems));
+
+    }
+
+    @Override
+    public void updateSubCloth(int i, SubClothItem subClothItem) {
+    }
+
+    @Override
+    public synchronized void checkListener(int noOfChildItems) {
+
+        totalItems = (getTotalItems() + noOfChildItems);
+        finalDeliveryCost = (getFinalDeliveryCost() + noOfChildItems*100);
 
         costTv.setText("Rs. " + String.valueOf(finalDeliveryCost));
         qtyTv.setText("Qty: " + String.valueOf(totalItems));

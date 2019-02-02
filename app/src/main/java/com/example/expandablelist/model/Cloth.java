@@ -1,13 +1,18 @@
-package com.example.expandablelist;
+package com.example.expandablelist.model;
+
+import java.util.ArrayList;
 
 public class Cloth {
     String name, description;
     int noOfCloth;
+    ArrayList<SubClothItem> subClothItemArrayList=new ArrayList<>();
 
-    public Cloth(String name, String description, int noOfCloth) {
+
+    public Cloth(String name, String description, int noOfCloth, ArrayList<SubClothItem> subClothItemArrayList) {
         this.name = name;
         this.description = description;
         this.noOfCloth = noOfCloth;
+        this.subClothItemArrayList = subClothItemArrayList;
     }
 
     public String getName() {
@@ -33,4 +38,13 @@ public class Cloth {
     public void setNoOfCloth(int noOfCloth) {
         this.noOfCloth = noOfCloth;
     }
+
+    public ArrayList<SubClothItem> getSubClothItemArrayList() {
+        return subClothItemArrayList;
+    }
+
+    public void setSubClothItemArrayList(ArrayList<SubClothItem> subClothItemArrayList) {
+        this.subClothItemArrayList = subClothItemArrayList;
+    }
+
 }

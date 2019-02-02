@@ -92,7 +92,7 @@
             android:layout_height="50dp"
             android:layout_margin="8dp"
             android:layout_weight="1"
-            android:background="@color/grey"
+            android:background="#00000000"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_exprience_icon_neutral" />
 
@@ -113,10 +113,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:background="@color/colorPrimary"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:layout_weight="2"
-        android:text="save"
+        android:text="Submit feedback"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
