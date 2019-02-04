@@ -119,6 +119,7 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
     @Override
     public void allChildItemChecked(int index) {
         //todo: make the item indexed at index position checkbox checked
+
     }
 
     @Override

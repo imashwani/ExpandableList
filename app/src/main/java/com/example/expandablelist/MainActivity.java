@@ -20,12 +20,11 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements ChildAdapter.ChildListener, ParentAdapter.ActionListener, PayNowBottomSheetFragment.PaynowFragmentListener {
 
-    ArrayList<Order> orders = null;
     RecyclerView washAndironELV, washAndFoldELV, dryCleanELV, rv4;
     Button signButton;
     TextView costTv, qtyTv, orderIdTv;
     static int finalDeliveryCost = 0;
-    ParentAdapter parentAdapter;
+    ParentAdapter parentAdapter,p1,p2;
     static int totalItems = 0;
     String orderId = "#QWL182105618006";
 
@@ -59,42 +58,49 @@ public class MainActivity extends AppCompatActivity
         washAndFoldELV = findViewById(R.id.alteration_rv);
 
 
-        parentAdapter = new ParentAdapter(orders.get(0), this);
+        parentAdapter = new ParentAdapter(initOrder(), this);
         parentAdapter.setActionListener(this);
 
         washAndFoldELV.setLayoutManager(new LinearLayoutManager(this));
         washAndFoldELV.setHasFixedSize(true);
         washAndFoldELV.setAdapter(parentAdapter);
 
+        p1=new ParentAdapter(initOrder(),this);
+        p1.setActionListener(this);
         dryCleanELV.setLayoutManager(new LinearLayoutManager(this));
         dryCleanELV.setHasFixedSize(true);
-        dryCleanELV.setAdapter(parentAdapter);
+        dryCleanELV.setAdapter(p1);
 
+        p2=new ParentAdapter(initOrder(),this);
+        p2.setActionListener(this);
         washAndironELV.setLayoutManager(new LinearLayoutManager(this));
         washAndironELV.setHasFixedSize(true);
         washAndironELV.setNestedScrollingEnabled(false);
-        washAndironELV.setAdapter(parentAdapter);
-
+        washAndironELV.setAdapter(p2);
 
         payNowBottomSheetFragment = new PayNowBottomSheetFragment();
         payNowBottomSheetFragment.setListener(this);
-
     }
 
-    private void initOrder() {
-        orders = new ArrayList<>();
+    private Order initOrder() {
+        Order order=null;
         List<Cloth> clothList = new ArrayList<>();
-        SubClothItem subClothItem = new SubClothItem("Shirt", false);
+
+        clothList.add(new Cloth("Shirt", "this is desc", 5, getClothList("Shirt")));
+        clothList.add(new Cloth("Trouser", "this is desc", 3, getClothList("Trouser")));
+        clothList.add(new Cloth("Drap", "this is desc", 3, getClothList("Drap")));
+        clothList.add(new Cloth("Muffler", "this is desc", 2, getClothList("Muffler")));
+        clothList.add(new Cloth("Inner", "this is desc", 5, getClothList("Inner")));
+        order=new Order((ArrayList<Cloth>) clothList, "Press and Press", clothList.size(), (float) 122.4);
+        return order;
+    }
+
+    public ArrayList<SubClothItem> getClothList(String clothName){
+
+        SubClothItem subClothItem = new SubClothItem(clothName, false);
         ArrayList<SubClothItem> subClothItemArrayList = new ArrayList<>();
         for (int i = 0; i < 5; i++) subClothItemArrayList.add(subClothItem);
-        clothList.add(new Cloth("Shirt", "this is desc", 5, subClothItemArrayList));
-        clothList.add(new Cloth("Trouser", "this is desc", 3, subClothItemArrayList));
-        clothList.add(new Cloth("Drap", "this is desc", 3, subClothItemArrayList));
-        clothList.add(new Cloth("Muffler", "this is desc", 2, subClothItemArrayList));
-        clothList.add(new Cloth("Shirt", "this is desc", 5, subClothItemArrayList));
-        orders.add(new Order((ArrayList<Cloth>) clothList, "Press and Press", clothList.size(), (float) 122.4));
-
-        orders.add(new Order((ArrayList<Cloth>) clothList, "Wash and Fold", clothList.size(), (float) 100.48));
+        return subClothItemArrayList;
     }
 
     public static int getFinalDeliveryCost() {
