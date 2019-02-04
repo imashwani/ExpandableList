@@ -8,17 +8,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
+
 import com.example.expandablelist.model.SubClothItem;
 
 import java.util.ArrayList;
 
 public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildViewHolder> {
 
+    ChildCheckListner childCheckListner;
+    int parentItemIndex;
     Context context;
     ChildListener childListener;
     ArrayList<SubClothItem> subClothItemArrayList;
 
-    public ChildAdapter(Context context, ArrayList<SubClothItem> subClothItemArrayList) {
+    public ChildAdapter(Context context, ArrayList<SubClothItem> subClothItemArrayList, int parentItemIndex) {
+        this.parentItemIndex = parentItemIndex;
         this.context = context;
         this.subClothItemArrayList = subClothItemArrayList;
     }
@@ -53,10 +57,19 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildViewHol
         void updateSubCloth(int i, SubClothItem subClothItem);
     }
 
+    void addChildCheckListener(ChildCheckListner c) {
+        childCheckListner = c;
+    }
+
     void addListener(ChildListener childListener) {
         this.childListener = childListener;
     }
 
+    interface ChildCheckListner {
+        void allChildItemChecked(int index);
+
+        void oneItemUnChecked(int index);
+    }
     @Override
     public int getItemCount() {
         return 5;

@@ -18,7 +18,7 @@ import com.example.expandablelist.model.SubClothItem;
 
 import java.util.ArrayList;
 
-public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder> {
+public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder> implements ChildAdapter.ChildCheckListner {
 
     Order order;
     Context context;
@@ -43,6 +43,7 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int i) {
 
+
         Cloth cloth = order.getClothArrayList().get(i);
         ArrayList<String> clothNames = new ArrayList<>();
         final ArrayList<Boolean> booleans = new ArrayList<>();
@@ -50,7 +51,7 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
             clothNames.add(cloth.getName());
             booleans.add(false);
         }
-        viewHolder.noOfClothTv.setText(String.valueOf(cloth.getNoOfCloth()) + "Items |");
+        viewHolder.noOfClothTv.setText(String.valueOf(cloth.getNoOfCloth()) + "Items ");
         viewHolder.clothNameTv.setText(cloth.getName());
         viewHolder.clothDescTv.setText(cloth.getDescription());
 
@@ -58,9 +59,10 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
 
         viewHolder.childRecyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-        final ChildAdapter childAdapter = new ChildAdapter(context, order.getClothArrayList().get(i).getSubClothItemArrayList());
+        final ChildAdapter childAdapter = new ChildAdapter(context, order.getClothArrayList().get(i).getSubClothItemArrayList(), i);
         //adding listener b/w activity and child rv
         childAdapter.addListener((ChildAdapter.ChildListener) context);
+        childAdapter.addChildCheckListener(this);
 
         viewHolder.childRecyclerView.setAdapter(childAdapter);
 
@@ -113,6 +115,17 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
     public int getItemCount() {
         return order.getClothArrayList().size();
     }
+
+    @Override
+    public void allChildItemChecked(int index) {
+        //todo: make the item indexed at index position checkbox checked
+    }
+
+    @Override
+    public void oneItemUnChecked(int index) {
+
+    }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView clothNameTv, clothDescTv, noOfClothTv;

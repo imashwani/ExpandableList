@@ -6,14 +6,94 @@
     android:layout_height="match_parent"
     tools:context=".SignatureActivity">
 
+    <TextView
+        android:id="@+id/sign_clientName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Aroun Mithun"
+        android:textColor="@color/theme_blue"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/sign_service_type"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/sign_client_Address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:minLines="2"
+        android:text="#224, Block A, phase 2, Main Road,\n Noida, New Delhi - 201 456. "
+        app:layout_constraintEnd_toStartOf="@+id/sign_total_cost"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sign_clientName" />
+
+    <TextView
+        android:id="@+id/sign_client_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="+91 9925455662"
+        app:layout_constraintBaseline_toBaselineOf="@+id/sign_qty_total"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/sign_service_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Per Piece"
+        android:textColor="@color/theme_blue"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/sign_total_cost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Rs 1145"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sign_service_type" />
+
+
+    <TextView
+        android:id="@+id/sign_qty_total"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/bg_stroke_gray_plainbg"
+        android:padding="8dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingRight="12dp"
+        android:text="Qty: 0"
+        android:textColor="@color/theme_blue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sign_total_cost" />
+
     <android.support.v7.widget.CardView
         android:id="@+id/card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/sign_qty_total">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -33,7 +113,7 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/signature_pad"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="200dp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:penColor="@android:color/black" />
 
@@ -54,13 +134,13 @@
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:padding="12dp"
         android:text="How was experience with our Service?"
         android:textAlignment="center"
         android:textSize="28sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@+id/card"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         tools:layout_editor_absoluteX="16dp" />
 
     <LinearLayout
@@ -68,13 +148,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:layout_marginBottom="8dp"
         android:gravity="center"
         android:orientation="horizontal"
         android:weightSum="6"
+        app:layout_constraintBottom_toTopOf="@+id/sign_submit_feedback"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView">
+        app:layout_constraintStart_toStartOf="parent">
 
         <ImageButton
             android:id="@+id/face_sad"
@@ -108,19 +189,15 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/save"
+        android:id="@+id/sign_submit_feedback"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@color/colorPrimary"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:layout_weight="2"
+        android:background="@color/colorPrimary"
         android:text="Submit feedback"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

@@ -18,15 +18,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements ChildAdapter.ChildListener, ParentAdapter.ActionListener {
+        implements ChildAdapter.ChildListener, ParentAdapter.ActionListener, PayNowBottomSheetFragment.PaynowFragmentListener {
 
     ArrayList<Order> orders = null;
     RecyclerView washAndironELV, washAndFoldELV, dryCleanELV, rv4;
     Button signButton;
-    TextView costTv, qtyTv;
+    TextView costTv, qtyTv, orderIdTv;
     static int finalDeliveryCost = 0;
     ParentAdapter parentAdapter;
     static int totalItems = 0;
+    String orderId = "#QWL182105618006";
+
+    PayNowBottomSheetFragment payNowBottomSheetFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +38,16 @@ public class MainActivity extends AppCompatActivity
 
         costTv = findViewById(R.id.final_delivery_cost_tv);
         qtyTv = findViewById(R.id.qty_total_item);
+        orderIdTv = findViewById(R.id.order_id_main_tv);
+
+        orderIdTv.setText(orderId);
 
         signButton = findViewById(R.id.bt_sign);
         signButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, SignatureActivity.class));
+                payNowBottomSheetFragment.show(getSupportFragmentManager(), "this");
+//                startActivity(new Intent(MainActivity.this, SignatureActivity.class));
             }
         });
 
@@ -56,14 +63,21 @@ public class MainActivity extends AppCompatActivity
         parentAdapter.setActionListener(this);
 
         washAndFoldELV.setLayoutManager(new LinearLayoutManager(this));
+        washAndFoldELV.setHasFixedSize(true);
         washAndFoldELV.setAdapter(parentAdapter);
 
         dryCleanELV.setLayoutManager(new LinearLayoutManager(this));
+        dryCleanELV.setHasFixedSize(true);
         dryCleanELV.setAdapter(parentAdapter);
 
         washAndironELV.setLayoutManager(new LinearLayoutManager(this));
+        washAndironELV.setHasFixedSize(true);
+        washAndironELV.setNestedScrollingEnabled(false);
         washAndironELV.setAdapter(parentAdapter);
 
+
+        payNowBottomSheetFragment = new PayNowBottomSheetFragment();
+        payNowBottomSheetFragment.setListener(this);
 
     }
 
@@ -111,7 +125,7 @@ public class MainActivity extends AppCompatActivity
 
         totalItems = (getTotalItems() + cost / 100);
 
-        costTv.setText("Rs. " + String.valueOf(finalDeliveryCost));
+        costTv.setText("₹ " + String.valueOf(finalDeliveryCost));
         qtyTv.setText("Qty: " + String.valueOf(totalItems));
 
     }
@@ -126,8 +140,32 @@ public class MainActivity extends AppCompatActivity
         totalItems = (getTotalItems() + noOfChildItems);
         finalDeliveryCost = (getFinalDeliveryCost() + noOfChildItems*100);
 
-        costTv.setText("Rs. " + String.valueOf(finalDeliveryCost));
+        costTv.setText("₹ " + String.valueOf(finalDeliveryCost));
         qtyTv.setText("Qty: " + String.valueOf(totalItems));
 
+    }
+
+    @Override
+    public void onCashPayment() {
+        nextAct();
+    }
+
+    @Override
+    public void onCardPayment() {
+        nextAct();
+    }
+
+    @Override
+    public void onWalletPayment() {
+        nextAct();
+    }
+
+    void nextAct() {
+        Intent intent = new Intent(MainActivity.this, SignatureActivity.class);
+        intent.putExtra("qty", qtyTv.getText().toString());
+        intent.putExtra("cost", costTv.getText().toString());
+        intent.putExtra("orderId", orderId);
+
+        startActivity(intent);
     }
 }
