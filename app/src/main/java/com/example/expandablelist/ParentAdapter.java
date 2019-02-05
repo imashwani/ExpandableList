@@ -1,5 +1,6 @@
 package com.example.expandablelist;
 
+import android.arch.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -79,6 +80,7 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
             public void onClick(View v) {
                 int check = 0;
                 boolean isChecked = viewHolder.parentCheckbox.isChecked();
+
 
                 for (int i = 0; i < order.getClothArrayList().size(); i++) {
                     View view = viewHolder.childRecyclerView.getChildAt(i);
