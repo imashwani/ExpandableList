@@ -18,7 +18,7 @@ import com.example.expandablelist.model.SubClothItem;
 
 import java.util.ArrayList;
 
-public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder> implements ChildAdapter.ChildCheckListner {
+public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder> implements ChildAdapter.ChildCheckListener {
 
     Order order;
     Context context;
@@ -44,18 +44,15 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int i) {
 
 
-        Cloth cloth = order.getClothArrayList().get(i);
-        ArrayList<String> clothNames = new ArrayList<>();
-        final ArrayList<Boolean> booleans = new ArrayList<>();
-        for (int j = 0; j < 5; j++) {
-            clothNames.add(cloth.getName());
-            booleans.add(false);
-        }
+        final Cloth cloth = order.getClothArrayList().get(i);
+
         viewHolder.noOfClothTv.setText(String.valueOf(cloth.getNoOfCloth()) + "Items ");
         viewHolder.clothNameTv.setText(cloth.getName());
         viewHolder.clothDescTv.setText(cloth.getDescription());
 
+        if(!cloth.isChecked())
         viewHolder.childRecyclerView.setVisibility(View.GONE);
+
 
         viewHolder.childRecyclerView.setLayoutManager(new LinearLayoutManager(context));
 
@@ -75,13 +72,15 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
             }
         });
 
+        viewHolder.parentCheckbox.setChecked(order.getClothArrayList().get(i).isChecked());
+
         viewHolder.parentCheckbox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int check = 0;
                 boolean isChecked = viewHolder.parentCheckbox.isChecked();
 
-                for (int i = 0; i < booleans.size(); i++) {
+                for (int i = 0; i < order.getClothArrayList().size(); i++) {
                     View view = viewHolder.childRecyclerView.getChildAt(i);
                     if (view instanceof ConstraintLayout) {
                         CheckBox checkBox = (CheckBox) ((ConstraintLayout) view).getViewById(R.id.child_checkbox);
@@ -119,7 +118,8 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
     @Override
     public void allChildItemChecked(int index) {
         //todo: make the item indexed at index position checkbox checked
-
+        order.getClothArrayList().get(index).setChecked(true);
+        notifyItemChanged(index);
     }
 
     @Override

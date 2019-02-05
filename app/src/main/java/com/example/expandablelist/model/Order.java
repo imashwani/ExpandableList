@@ -8,6 +8,8 @@ public class Order {
     int items;
     float cost;
 
+
+
     public Order(ArrayList<Cloth> clothArrayList, String serviceType, int items, float cost) {
         this.clothArrayList = clothArrayList;
         this.serviceType = serviceType;

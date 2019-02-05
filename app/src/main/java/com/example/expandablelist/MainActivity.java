@@ -97,9 +97,9 @@ public class MainActivity extends AppCompatActivity
 
     public ArrayList<SubClothItem> getClothList(String clothName){
 
-        SubClothItem subClothItem = new SubClothItem(clothName, false);
+//        SubClothItem subClothItem = new SubClothItem(clothName, false);
         ArrayList<SubClothItem> subClothItemArrayList = new ArrayList<>();
-        for (int i = 0; i < 5; i++) subClothItemArrayList.add(subClothItem);
+        for (int i = 0; i < 5; i++) subClothItemArrayList.add(new SubClothItem(clothName,false));
         return subClothItemArrayList;
     }
 
@@ -134,10 +134,6 @@ public class MainActivity extends AppCompatActivity
         costTv.setText("₹ " + String.valueOf(finalDeliveryCost));
         qtyTv.setText("Qty: " + String.valueOf(totalItems));
 
-    }
-
-    @Override
-    public void updateSubCloth(int i, SubClothItem subClothItem) {
     }
 
     @Override

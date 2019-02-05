@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildViewHolder> {
 
-    ChildCheckListner childCheckListner;
+    ChildCheckListener childCheckListener;
     int parentItemIndex;
     Context context;
     ChildListener childListener;
@@ -43,36 +43,51 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildViewHol
         childViewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (childViewHolder.checkBox.isChecked())
+                if (childViewHolder.checkBox.isChecked()){
+                    subClothItemArrayList.get(i).setChecked(true);
                     childListener.costUpdate(100);
-                else
+                }
+                else{
+                    subClothItemArrayList.get(i).setChecked(false);
                     childListener.costUpdate(-100);
+                }
+
+                int c=0;
+                for (SubClothItem s:subClothItemArrayList ) {
+                    if(s.isChecked()){
+                        c++;
+                    }
+                }
+                if(c==subClothItemArrayList.size()){
+                    childCheckListener.allChildItemChecked(parentItemIndex);
+                }
+                else if(c==0){
+
+                }
             }
         });
-
     }
 
     interface ChildListener {
         void costUpdate(int cost);
-        void updateSubCloth(int i, SubClothItem subClothItem);
     }
 
-    void addChildCheckListener(ChildCheckListner c) {
-        childCheckListner = c;
+    void addChildCheckListener(ChildCheckListener c) {
+        childCheckListener = c;
     }
 
     void addListener(ChildListener childListener) {
         this.childListener = childListener;
     }
 
-    interface ChildCheckListner {
+    interface ChildCheckListener {
         void allChildItemChecked(int index);
 
         void oneItemUnChecked(int index);
     }
     @Override
     public int getItemCount() {
-        return 5;
+        return subClothItemArrayList.size();
     }
 
     public class ChildViewHolder extends RecyclerView.ViewHolder {

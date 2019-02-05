@@ -5,14 +5,32 @@ import java.util.ArrayList;
 public class Cloth {
     String name, description;
     int noOfCloth;
-    ArrayList<SubClothItem> subClothItemArrayList=new ArrayList<>();
+    boolean isChecked;
+    ArrayList<SubClothItem> subClothItemArrayList = new ArrayList<>();
 
 
     public Cloth(String name, String description, int noOfCloth, ArrayList<SubClothItem> subClothItemArrayList) {
         this.name = name;
         this.description = description;
         this.noOfCloth = noOfCloth;
+        this.isChecked = false;
         this.subClothItemArrayList = subClothItemArrayList;
+    }
+
+    public Cloth(String name, String description, int noOfCloth, boolean isChecked, ArrayList<SubClothItem> subClothItemArrayList) {
+        this.name = name;
+        this.description = description;
+        this.noOfCloth = noOfCloth;
+        this.isChecked = isChecked;
+        this.subClothItemArrayList = subClothItemArrayList;
+    }
+
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
     }
 
     public String getName() {
