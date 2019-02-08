@@ -56,13 +56,12 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildViewHol
                 for (SubClothItem s:subClothItemArrayList ) {
                     if(s.isChecked()){
                         c++;
+                        childCheckListener.singleChildItemChecked(parentItemIndex,subClothItemArrayList);
+                        break;
                     }
                 }
-                if(c==subClothItemArrayList.size()){
-                    childCheckListener.allChildItemChecked(parentItemIndex);
-                }
-                else if(c==0){
-
+                if(c==0){
+                    childCheckListener.allItemUnselected(parentItemIndex);
                 }
             }
         });
@@ -81,9 +80,9 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildViewHol
     }
 
     interface ChildCheckListener {
-        void allChildItemChecked(int index);
+        void singleChildItemChecked(int parentItemIndex,ArrayList<SubClothItem> subClothItemArrayList);
 
-        void oneItemUnChecked(int index);
+        void allItemUnselected(int index);
     }
     @Override
     public int getItemCount() {

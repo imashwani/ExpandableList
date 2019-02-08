@@ -6,6 +6,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,9 @@ import com.example.expandablelist.model.SubClothItem;
 
 import java.util.ArrayList;
 
-public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder> implements ChildAdapter.ChildCheckListener {
+import static android.content.ContentValues.TAG;
+
+public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder> implements ChildAdapter.ChildCheckListener , ChildAdapter.ChildListener {
 
     Order order;
     Context context;
@@ -42,23 +45,21 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int i) {
-
-
         final Cloth cloth = order.getClothArrayList().get(i);
 
         viewHolder.noOfClothTv.setText(String.valueOf(cloth.getNoOfCloth()) + "Items ");
         viewHolder.clothNameTv.setText(cloth.getName());
         viewHolder.clothDescTv.setText(cloth.getDescription());
 
-        if(!cloth.isChecked())
-        viewHolder.childRecyclerView.setVisibility(View.GONE);
+        if (!cloth.isChecked())
+            viewHolder.childRecyclerView.setVisibility(View.GONE);
 
 
         viewHolder.childRecyclerView.setLayoutManager(new LinearLayoutManager(context));
 
         final ChildAdapter childAdapter = new ChildAdapter(context, order.getClothArrayList().get(i).getSubClothItemArrayList(), i);
         //adding listener b/w activity and child rv
-        childAdapter.addListener((ChildAdapter.ChildListener) context);
+        childAdapter.addListener(this);
         childAdapter.addChildCheckListener(this);
 
         viewHolder.childRecyclerView.setAdapter(childAdapter);
@@ -69,6 +70,8 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
                 if (viewHolder.childRecyclerView.getVisibility() != View.VISIBLE) {
                     viewHolder.childRecyclerView.setVisibility(View.VISIBLE);
                 } else viewHolder.childRecyclerView.setVisibility(View.GONE);
+
+
             }
         });
 
@@ -79,6 +82,8 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
             public void onClick(View v) {
                 int check = 0;
                 boolean isChecked = viewHolder.parentCheckbox.isChecked();
+
+                order.getClothArrayList().get(i).setChecked(isChecked);
 
                 for (int i = 0; i < order.getClothArrayList().size(); i++) {
                     View view = viewHolder.childRecyclerView.getChildAt(i);
@@ -100,9 +105,8 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
                 int change = subClothItems.size() - check;
                 if (isChecked) {
                     actionListener.checkListener(change);
-                }
-                else{
-                    actionListener.checkListener(check*-1);
+                } else {
+                    actionListener.checkListener(check * -1);
                 }
                 System.out.println("notifying items changed bro " + isChecked);
             }
@@ -115,18 +119,32 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
         return order.getClothArrayList().size();
     }
 
+
     @Override
-    public void allChildItemChecked(int index) {
+    public void singleChildItemChecked(int parentItemIndex, ArrayList<SubClothItem> subClothItemArrayList) {
         //todo: make the item indexed at index position checkbox checked
-        order.getClothArrayList().get(index).setChecked(true);
-        notifyItemChanged(index);
+        order.getClothArrayList().get(parentItemIndex).setSubClothItemArrayList(subClothItemArrayList);
+        Log.d(TAG, "singleChildItemChecked: "+subClothItemArrayList.toString());
+        if (!order.getClothArrayList().get(parentItemIndex).isChecked()) {
+            order.getClothArrayList().get(parentItemIndex).setChecked(true);
+
+            notifyItemChanged(parentItemIndex);
+        }
     }
 
     @Override
-    public void oneItemUnChecked(int index) {
-
+    public synchronized void allItemUnselected(int index) {
+        if (order.getClothArrayList().get(index).isChecked()) {
+            order.getClothArrayList().get(index).setChecked(false);
+            notifyItemChanged(index);
+        }
     }
 
+    @Override
+    public synchronized void costUpdate(int cost) {
+        actionListener.checkListener(cost/100);
+    }
+//synchronized  void updateItem(int choice,)
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView clothNameTv, clothDescTv, noOfClothTv;
@@ -146,9 +164,7 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
         }
     }
 
-
     public interface ActionListener {
         void checkListener(int noOfChildItems);
-
     }
 }

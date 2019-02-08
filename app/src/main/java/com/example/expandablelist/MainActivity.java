@@ -18,13 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements ChildAdapter.ChildListener, ParentAdapter.ActionListener, PayNowBottomSheetFragment.PaynowFragmentListener {
+        implements ParentAdapter.ActionListener, PayNowBottomSheetFragment.PaynowFragmentListener {
 
-    RecyclerView washAndironELV, washAndFoldELV, dryCleanELV, rv4;
+    RecyclerView washAndironELV, washAndFoldELV, dryCleanELV;
+    Order orderWashIron,orderWashFold,orderDryClean;
     Button signButton;
     TextView costTv, qtyTv, orderIdTv;
     static int finalDeliveryCost = 0;
-    ParentAdapter parentAdapter,p1,p2;
+    ParentAdapter parentAdapter, p1, p2;
     static int totalItems = 0;
     String orderId = "#QWL182105618006";
 
@@ -40,6 +41,8 @@ public class MainActivity extends AppCompatActivity
         orderIdTv = findViewById(R.id.order_id_main_tv);
 
         orderIdTv.setText(orderId);
+        payNowBottomSheetFragment = new PayNowBottomSheetFragment();
+        payNowBottomSheetFragment.setListener(this);
 
         signButton = findViewById(R.id.bt_sign);
         signButton.setOnClickListener(new View.OnClickListener() {
@@ -58,32 +61,34 @@ public class MainActivity extends AppCompatActivity
         washAndFoldELV = findViewById(R.id.alteration_rv);
 
 
-        parentAdapter = new ParentAdapter(initOrder(), this);
+        orderWashFold=initOrder();
+        parentAdapter = new ParentAdapter(orderWashFold, this);
         parentAdapter.setActionListener(this);
 
         washAndFoldELV.setLayoutManager(new LinearLayoutManager(this));
         washAndFoldELV.setHasFixedSize(true);
         washAndFoldELV.setAdapter(parentAdapter);
 
-        p1=new ParentAdapter(initOrder(),this);
+        orderDryClean=initOrder();
+        p1 = new ParentAdapter(orderDryClean, this);
         p1.setActionListener(this);
         dryCleanELV.setLayoutManager(new LinearLayoutManager(this));
         dryCleanELV.setHasFixedSize(true);
         dryCleanELV.setAdapter(p1);
 
-        p2=new ParentAdapter(initOrder(),this);
+        orderDryClean=initOrder();
+        p2 = new ParentAdapter(orderDryClean, this);
         p2.setActionListener(this);
         washAndironELV.setLayoutManager(new LinearLayoutManager(this));
         washAndironELV.setHasFixedSize(true);
         washAndironELV.setNestedScrollingEnabled(false);
         washAndironELV.setAdapter(p2);
 
-        payNowBottomSheetFragment = new PayNowBottomSheetFragment();
-        payNowBottomSheetFragment.setListener(this);
+
     }
 
     private Order initOrder() {
-        Order order=null;
+        Order order = null;
         List<Cloth> clothList = new ArrayList<>();
 
         clothList.add(new Cloth("Shirt", "this is desc", 5, getClothList("Shirt")));
@@ -91,15 +96,15 @@ public class MainActivity extends AppCompatActivity
         clothList.add(new Cloth("Drap", "this is desc", 3, getClothList("Drap")));
         clothList.add(new Cloth("Muffler", "this is desc", 2, getClothList("Muffler")));
         clothList.add(new Cloth("Inner", "this is desc", 5, getClothList("Inner")));
-        order=new Order((ArrayList<Cloth>) clothList, "Press and Press", clothList.size(), (float) 122.4);
+        order = new Order((ArrayList<Cloth>) clothList, "Press and Press", clothList.size(), (float) 122.4);
         return order;
     }
 
-    public ArrayList<SubClothItem> getClothList(String clothName){
+    public ArrayList<SubClothItem> getClothList(String clothName) {
 
 //        SubClothItem subClothItem = new SubClothItem(clothName, false);
         ArrayList<SubClothItem> subClothItemArrayList = new ArrayList<>();
-        for (int i = 0; i < 5; i++) subClothItemArrayList.add(new SubClothItem(clothName,false));
+        for (int i = 0; i < 5; i++) subClothItemArrayList.add(new SubClothItem(clothName, false));
         return subClothItemArrayList;
     }
 
@@ -119,33 +124,18 @@ public class MainActivity extends AppCompatActivity
         MainActivity.totalItems = totalItems;
     }
 
-    @Override
-    public synchronized void costUpdate(int cost) {
-
-        finalDeliveryCost = (getFinalDeliveryCost() + cost);
-
-//        finalDeliveryCost += cost;
-        System.out.println(
-                "cost hai= " + String.valueOf(cost) + " totla=" + finalDeliveryCost
-        );
-
-        totalItems = (getTotalItems() + cost / 100);
-
-        costTv.setText("₹ " + String.valueOf(finalDeliveryCost));
-        qtyTv.setText("Qty: " + String.valueOf(totalItems));
-
-    }
 
     @Override
     public synchronized void checkListener(int noOfChildItems) {
-
         totalItems = (getTotalItems() + noOfChildItems);
-        finalDeliveryCost = (getFinalDeliveryCost() + noOfChildItems*100);
-
+        finalDeliveryCost = (getFinalDeliveryCost() + noOfChildItems * 100);
+        System.out.println(
+                "cost hai= " + String.valueOf(noOfChildItems * 100) + " total=" + finalDeliveryCost
+        );
         costTv.setText("₹ " + String.valueOf(finalDeliveryCost));
         qtyTv.setText("Qty: " + String.valueOf(totalItems));
-
     }
+
 
     @Override
     public void onCashPayment() {
