@@ -1,5 +1,6 @@
 package com.example.expandablelist;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.example.expandablelist.ViewModel.MainViewModel;
 import com.example.expandablelist.model.SubClothItem;
 
 import java.util.ArrayList;
@@ -45,25 +47,24 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildViewHol
             public void onClick(View v) {
                 if (childViewHolder.checkBox.isChecked()){
                     subClothItemArrayList.get(i).setChecked(true);
-                    childListener.costUpdate(100);
                 }
                 else{
                     subClothItemArrayList.get(i).setChecked(false);
-                    childListener.costUpdate(-100);
                 }
 
                 int c=0;
                 for (SubClothItem s:subClothItemArrayList ) {
                     if(s.isChecked()){
                         c++;
+                        childCheckListener.singleChildItemChecked(parentItemIndex);
+                        break;
                     }
                 }
-                if(c==subClothItemArrayList.size()){
-                    childCheckListener.allChildItemChecked(parentItemIndex);
+                if(c==0){
+                    childCheckListener.allChildItemsUnChecked(parentItemIndex);
                 }
-                else if(c==0){
+                childViewHolder.mainViewModel.setChildData(subClothItemArrayList,parentItemIndex,i);
 
-                }
             }
         });
     }
@@ -81,9 +82,9 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildViewHol
     }
 
     interface ChildCheckListener {
-        void allChildItemChecked(int index);
+        void allChildItemsUnChecked(int index);
 
-        void oneItemUnChecked(int index);
+        void singleChildItemChecked(int parentIndex);
     }
     @Override
     public int getItemCount() {
@@ -93,6 +94,7 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildViewHol
     public class ChildViewHolder extends RecyclerView.ViewHolder {
         TextView clothName, clothDesc, itemCost;
         CheckBox checkBox;
+        MainViewModel mainViewModel;
 
         public ChildViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -100,6 +102,9 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildViewHol
             clothName = itemView.findViewById(R.id.el_clothName);
             checkBox = itemView.findViewById(R.id.child_checkbox);
             itemCost = itemView.findViewById(R.id.child_item_cost);
+            mainViewModel= ViewModelProviders.of((MainActivity)context).get(MainViewModel.class);
+            subClothItemArrayList=mainViewModel.getOrderList().getValue().get(0).getClothArrayList().get(parentItemIndex).getSubClothItemArrayList();
+
         }
     }
 }

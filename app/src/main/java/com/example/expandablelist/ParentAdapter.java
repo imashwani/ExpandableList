@@ -1,6 +1,7 @@
 package com.example.expandablelist;
 
 import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.example.expandablelist.ViewModel.MainViewModel;
 import com.example.expandablelist.model.Cloth;
 import com.example.expandablelist.model.Order;
 import com.example.expandablelist.model.SubClothItem;
@@ -51,8 +53,8 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
         viewHolder.clothNameTv.setText(cloth.getName());
         viewHolder.clothDescTv.setText(cloth.getDescription());
 
-        if(!cloth.isChecked())
-        viewHolder.childRecyclerView.setVisibility(View.GONE);
+        if (!cloth.isChecked())
+            viewHolder.childRecyclerView.setVisibility(View.GONE);
 
 
         viewHolder.childRecyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -75,6 +77,7 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
 
         viewHolder.parentCheckbox.setChecked(order.getClothArrayList().get(i).isChecked());
 
+
         viewHolder.parentCheckbox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,13 +85,12 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
                 boolean isChecked = viewHolder.parentCheckbox.isChecked();
 
 
-                for (int i = 0; i < order.getClothArrayList().size(); i++) {
-                    View view = viewHolder.childRecyclerView.getChildAt(i);
-                    if (view instanceof ConstraintLayout) {
-                        CheckBox checkBox = (CheckBox) ((ConstraintLayout) view).getViewById(R.id.child_checkbox);
-                        if (checkBox.isChecked()) {
+                ArrayList<Cloth> clothArrayList = new ArrayList<>();
+
+                for (int i = 0; i < clothArrayList.size(); i++) {
+                    for (Cloth c : clothArrayList) {
+                        if (c.isChecked())
                             check++;
-                        }
                     }
                 }
 
@@ -97,16 +99,19 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
                     subClothItems.get(t).setChecked(isChecked);
 
                 order.getClothArrayList().get(i).setSubClothItemArrayList(subClothItems);
-                childAdapter.notifyDataSetChanged();
+                order.getClothArrayList().get(i).setChecked(isChecked);
+
+                viewHolder.mainViewModel.setParentData(order, i);
 
                 int change = subClothItems.size() - check;
                 if (isChecked) {
                     actionListener.checkListener(change);
-                }
-                else{
-                    actionListener.checkListener(check*-1);
+                } else {
+                    actionListener.checkListener(check * -1);
                 }
                 System.out.println("notifying items changed bro " + isChecked);
+
+                childAdapter.notifyDataSetChanged();
             }
         });
 
@@ -117,16 +122,22 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
         return order.getClothArrayList().size();
     }
 
+
     @Override
-    public void allChildItemChecked(int index) {
-        //todo: make the item indexed at index position checkbox checked
-        order.getClothArrayList().get(index).setChecked(true);
-        notifyItemChanged(index);
+    public void allChildItemsUnChecked(int parentIndex) {
+        order.getClothArrayList().get(parentIndex).setChecked(false);
+        ViewModelProviders.of((MainActivity)context).get(MainViewModel.class
+        ).setParentData(order,parentIndex);
+
+        notifyItemChanged(parentIndex);
     }
 
     @Override
-    public void oneItemUnChecked(int index) {
-
+    public void singleChildItemChecked(int parentIndex) {
+        if (order.getClothArrayList().get(parentIndex).isChecked() == false) {
+            order.getClothArrayList().get(parentIndex).setChecked(true);
+            notifyItemChanged(parentIndex);
+        }
     }
 
 
@@ -135,16 +146,19 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
         RecyclerView childRecyclerView;
         CardView cardView;
         CheckBox parentCheckbox;
+        MainViewModel mainViewModel;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            mainViewModel = ViewModelProviders.of((MainActivity) context).get(MainViewModel.class);
             clothNameTv = itemView.findViewById(R.id.parent_ClothName);
             clothDescTv = itemView.findViewById(R.id.parent_itemDescription);
             noOfClothTv = itemView.findViewById(R.id.parent_itemCount);
             cardView = itemView.findViewById(R.id.card_parent_rv);
             childRecyclerView = itemView.findViewById(R.id.child_rv);
             parentCheckbox = itemView.findViewById(R.id.parent_checkBox);
+            order=mainViewModel.getOrderList().getValue().get(0);
         }
     }
 

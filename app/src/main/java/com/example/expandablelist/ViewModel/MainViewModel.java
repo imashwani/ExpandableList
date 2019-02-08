@@ -47,4 +47,20 @@ public class MainViewModel extends ViewModel {
         for (int i = 0; i < 5; i++) subClothItemArrayList.add(new SubClothItem(clothName, false));
         return subClothItemArrayList;
     }
+    public void setParentData(Order newOrder,int index){
+//        Cloth cloth=orderListMutableLiveData.getValue().get(0).getClothArrayList().get(index);
+//        cloth.setChecked(newOrder.getClothArrayList().get(index).isChecked());
+//        orderListMutableLiveData.getValue().get(0).getClothArrayList().set(index,cloth);
+        ArrayList<Order> ol=new ArrayList<>();
+        ol.add(newOrder);
+        orderListMutableLiveData.setValue(ol);
+    }
+    public  void  setChildData(ArrayList<SubClothItem> subClothItemArrayList,int parentIndex,int childIndex){
+//        ol.getValue().get(parentIndex).getClothArrayList().get(childIndex).setSubClothItemArrayList(subClothItemArrayList);
+        ArrayList<Order> ol=new ArrayList<>();
+        ol.add(orderListMutableLiveData.getValue().get(0));
+        ol.get(0).getClothArrayList().get(parentIndex).setChecked(true);
+        ol.get(0).getClothArrayList().get(parentIndex).setSubClothItemArrayList(subClothItemArrayList);
+        orderListMutableLiveData.setValue(ol);
+    }
 }
