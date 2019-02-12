@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity
 
 
     @Override
-    public synchronized void checkListener(int noOfChildItems) {
+    public void checkListener(int noOfChildItems) {
         totalItems = (getTotalItems() + noOfChildItems);
         finalDeliveryCost = (getFinalDeliveryCost() + noOfChildItems * 100);
         System.out.println(

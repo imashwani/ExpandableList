@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 import static android.content.ContentValues.TAG;
 
-public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder> implements ChildAdapter.ChildCheckListener , ChildAdapter.ChildListener {
+public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder> implements ChildAdapter.ChildCheckListener, ChildAdapter.ChildListener {
 
     Order order;
     Context context;
@@ -77,11 +77,16 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
 
         viewHolder.parentCheckbox.setChecked(order.getClothArrayList().get(i).isChecked());
 
+
         viewHolder.parentCheckbox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int check = 0;
                 boolean isChecked = viewHolder.parentCheckbox.isChecked();
+
+
+                if (isChecked)
+                    viewHolder.childRecyclerView.setVisibility(View.VISIBLE);
 
                 order.getClothArrayList().get(i).setChecked(isChecked);
 
@@ -121,14 +126,14 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
 
 
     @Override
-    public void singleChildItemChecked(int parentItemIndex, ArrayList<SubClothItem> subClothItemArrayList) {
+    public synchronized void singleChildItemChecked(int parentItemIndex, ArrayList<SubClothItem> subClothItemArrayList) {
         //todo: make the item indexed at index position checkbox checked
         order.getClothArrayList().get(parentItemIndex).setSubClothItemArrayList(subClothItemArrayList);
-        Log.d(TAG, "singleChildItemChecked: "+subClothItemArrayList.toString());
+        Log.d(TAG, "singleChildItemChecked: " + subClothItemArrayList.toString());
         if (!order.getClothArrayList().get(parentItemIndex).isChecked()) {
             order.getClothArrayList().get(parentItemIndex).setChecked(true);
 
-            notifyItemChanged(parentItemIndex);
+            notifyItemChanged(parentItemIndex, order.getClothArrayList().get(parentItemIndex));
         }
     }
 
@@ -142,7 +147,7 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
 
     @Override
     public synchronized void costUpdate(int cost) {
-        actionListener.checkListener(cost/100);
+        actionListener.checkListener(cost / 100);
     }
 //synchronized  void updateItem(int choice,)
 
