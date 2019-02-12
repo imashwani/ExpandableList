@@ -128,7 +128,7 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ViewHolder
         if (!order.getClothArrayList().get(parentItemIndex).isChecked()) {
             order.getClothArrayList().get(parentItemIndex).setChecked(true);
 
-            notifyItemChanged(parentItemIndex);
+            notifyItemChanged(parentItemIndex, order.getClothArrayList().get(parentItemIndex));
         }
     }
 
